@@ -2,64 +2,120 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-contract User{
+contract User {
     // personal details to be shared when verifying the person
-    string nic;
     string name;
+    string email;
+    string dob;
+    string country;
     string mobile;
-    string user_address;
+    string gender;
 
     // user wallet address - to restrict the updates of personal details
     address private owner;
 
-    // wallet address of last verifier 
-        // - we give permission for this address to retrieve our personal data
+    // wallet address of last verifier
+    // - we give permission for this address to retrieve our personal data
     address lastVerifier;
 
-    constructor() {
+    constructor(
+        string memory _name,
+        string memory _email,
+        string memory _dob,
+        string memory _country,
+        string memory _mobile,
+        string memory _gender
+    ) {
         owner = msg.sender;
+        name = _name;
+        email = _email;
+        dob = _dob;
+        country = _country;
+        mobile = _mobile;
+        gender = _gender;
     }
 
     // modifier to restrict the change of personal data only for the owner
     modifier isOwner() {
-       require(msg.sender == owner, "Caller is not owner");
+        require(msg.sender == owner, "Caller is not owner");
         _;
     }
 
     // modifier for giving permission to retreive our personal details only to the verifier
     modifier isVerified() {
-       require(msg.sender == lastVerifier, "Caller is not the verifier");
+        require(
+            msg.sender == lastVerifier || msg.sender == owner,
+            "Caller is not the verifier"
+        );
         _;
     }
 
-    // setters for personal details - restricted only to the owner
-    function setNIC(string memory _nic) public isOwner{
-        nic= _nic;
-    }
-    function setName(string memory _name) public isOwner{
+    // setters for default personal details - restricted only to the owner
+    function setName(string memory _name) public isOwner {
         name = _name;
     }
-    function setMobile(string memory _mobile) public isOwner{
+
+    function setEmail(string memory _email) public isOwner {
+        email = _email;
+    }
+
+    function setDOB(string memory _dob) public isOwner {
+        dob = _dob;
+    }
+
+    function setCountry(string memory _country) public isOwner {
+        country = _country;
+    }
+
+    function setMobile(string memory _mobile) public isOwner {
         mobile = _mobile;
     }
-    function setUserAddr(string memory _user_addr) public isOwner{
-        user_address = _user_addr;
+
+    function setGender(string memory _gender) public isOwner {
+        gender = _gender;
     }
-    function setLastVerifier(address verifier) public isOwner{
+
+    function setLastVerifier(address verifier) public isOwner {
         lastVerifier = verifier;
     }
 
-    // getters for personal detials - restricted only for last verifier
-    function getNIC() public view isVerified returns (string memory _nic){
-        return nic;
-    }
-    function getName() public view isVerified returns (string memory _name){
+    // getters for default personal detials - restricted only for last verifier and owner
+    function getName() public view isVerified returns (string memory _name) {
         return name;
     }
-    function getMobile() public view isVerified returns (string memory _mobile){
+
+    function getEmail() public view isVerified returns (string memory _email) {
+        return email;
+    }
+
+    function getDOB() public view isVerified returns (string memory _dob) {
+        return dob;
+    }
+
+    function getCountry()
+        public
+        view
+        isVerified
+        returns (string memory _country)
+    {
+        return country;
+    }
+
+    function getMobile()
+        public
+        view
+        isVerified
+        returns (string memory _mobile)
+    {
         return mobile;
     }
-    function getUserAddr() public view isVerified returns (string memory _user_addr){
-        return user_address;
+
+    function getGender()
+        public
+        view
+        isVerified
+        returns (string memory _gender)
+    {
+        return gender;
     }
 }
