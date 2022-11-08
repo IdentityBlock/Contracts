@@ -20,10 +20,12 @@ contract User {
     // user wallet address - to restrict the updates of personal details
     address private owner;
 
-    // wallet address of last verifier
-    // - we give permission for this address to retrieve our personal data
+    // wallet address of previous verifiers
+    // - we give permission for this addresses to retrieve our personal data
+    mapping(address => bool) verifiers;
     address lastVerifier;
 
+    // address[] verifiers;
     string[] verifications;
 
     constructor(
@@ -52,7 +54,7 @@ contract User {
     // modifier for giving permission to retreive our personal details only to the verifier
     modifier isVerified() {
         require(
-            msg.sender == lastVerifier || msg.sender == owner,
+            verifiers[msg.sender] == true || msg.sender == owner,
             "Caller is not the verifier"
         );
         _;
@@ -89,6 +91,7 @@ contract User {
         string memory _token
     ) public isOwner {
         lastVerifier = IVerifier(_verifierContract).verifyToken(_token, _user);
+        verifiers[lastVerifier] = true;
     }
 
     function addVerification(string memory _verification) public isOwner {
