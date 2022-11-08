@@ -94,6 +94,10 @@ contract User {
         verifiers[lastVerifier] = true;
     }
 
+    function revokeConsent(address _verifierAccount) public isOwner {
+        verifiers[_verifierAccount] = false;
+    }
+
     function addVerification(string memory _verification) public isOwner {
         verifications.push(_verification);
     }
