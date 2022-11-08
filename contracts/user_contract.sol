@@ -2,6 +2,12 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
+interface IVerifier {
+    function verifyToken(string memory token, address userContract)
+        external
+        returns (address);
+}
+
 contract User {
     // personal details to be shared when verifying the person
     string name;
@@ -17,6 +23,8 @@ contract User {
     // wallet address of last verifier
     // - we give permission for this address to retrieve our personal data
     address lastVerifier;
+
+    string[] verifications;
 
     constructor(
         string memory _name,
@@ -75,8 +83,20 @@ contract User {
         gender = _gender;
     }
 
-    function setLastVerifier(address verifier) public isOwner {
-        lastVerifier = verifier;
+    function verify(
+        address _verifierContract,
+        address _user,
+        string memory _token
+    ) public isOwner {
+        lastVerifier = IVerifier(_verifierContract).verifyToken(_token, _user);
+    }
+
+    function addVerification(string memory _verification) public isOwner {
+        verifications.push(_verification);
+    }
+
+    function getVerifications() public view isOwner returns (string[] memory) {
+        return verifications;
     }
 
     // getters for default personal detials - restricted only for last verifier and owner

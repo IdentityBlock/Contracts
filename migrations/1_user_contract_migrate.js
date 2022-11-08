@@ -17,5 +17,13 @@ var verifierContract = artifacts.require("User");
 
 module.exports = function (deployer) {
   // deployment steps
-  deployer.deploy(verifierContract);
+  deployer.deploy(
+    verifierContract,
+    "testUserName",
+    "testUserEmail",
+    "testUserDOB",
+    "testUserCountry",
+    "testUserMobile",
+    "testUserGender"
+  );
 };
